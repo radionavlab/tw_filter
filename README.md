@@ -1,8 +1,7 @@
-# gps_kf
-Kalman Filter for our GPS data
+# tw_filter
 
-# Disclosure:
-This code is adapted from https://github.com/KumarRobotics/vicon/tree/master/vicon
+Calculates thrust-to-weight ratio for a quadrotor using odometry
 
-# Launch:
-roslaunch gps_kf gps.launch
+# Usage
+
+roslaunch tw\_filter twQuad.launch quad\_namespace:=<quadname>

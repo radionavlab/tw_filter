@@ -1,0 +1,14 @@
+<launch>
+    <arg name="quad_namespace"/>
+
+    <node pkg="tw_filter" type="twFilter_node" name="twFilter"
+        ns="$(arg quad_namespace)" output="screen">
+            <param name="quadPoseTopic" type="string" value="ENU/local_odom"/>
+            <param name="maxTW" value="1.7"/>
+            <param name="mass" value="0.762"/>
+            <param name="pubRate" value="0.1"/>
+
+            <!-- Ground level can be nonzero if flying outside of normal area -->
+            <param name="groundLevel" value="0.0"/>
+    </node>
+</launch>

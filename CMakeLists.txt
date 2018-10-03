@@ -35,6 +35,6 @@ catkin_package(
     DEPENDS Eigen)
 
 add_executable(twFilter_node src/tw_odom.cpp src/filterTW.cpp)
-add_dependencies(twFilter_node tw_filter__generate_messages_cpp)
+add_dependencies(twFilter_node tw_filter_generate_messages_cpp)
 target_link_libraries(twFilter_node ${catkin_LIBRARIES})
 

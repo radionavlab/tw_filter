@@ -113,9 +113,10 @@ void twNode::gpsCallback(const nav_msgs::Odometry::ConstPtr &msg)
 {
 	double tNow = tCurr();
 
-  	Eigen::Matrix<double,6,1> zMeas;
+  Eigen::Matrix<double,6,1> zMeas;
  	if(kfInit)  //only filter if initPose_ has been set
   	{
+//      ROS_INFO("Pose received");
   		Eigen::Matrix3d RR(quaternionSetpoint);
   		Eigen::Vector3d uvec = RR*Eigen::Vector3d(0.0,0.0,throttleSetpoint);
   		

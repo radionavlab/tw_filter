@@ -21,6 +21,7 @@ twNode::twNode(ros::NodeHandle &nh)
   	ros::param::get(quadName + "/pubRate", pubRate);
   	ros::param::get(quadName + "/groundLevel",floorL);
   	throttleMax = tmax*9.81;
+    twCounter=0;
 
   	lastGpsTime=0.0;
   	lastJoyTime=0.0;
@@ -61,8 +62,10 @@ void twNode::timerCallback(const ros::TimerEvent &event)
 
 	double meanTW=0.0;
 
-	for(int ij;ij++;ij<twCounter)
+	for(int ij=0;ij<twCounter;ij++)
 	{
+    //std::cout << "val: " << twStorage(ij) << std::endl << 
+    //  "sum: " << (1.0/twCounter)*twStorage(ij) << std::endl;
 		meanTW = meanTW + (1.0/twCounter)*twStorage(ij);
 	}
 
@@ -137,11 +140,12 @@ void twNode::gpsCallback(const nav_msgs::Odometry::ConstPtr &msg)
 		kfTW_.measurementUpdate(measM);
 		xCurr=kfTW_.getState();
 
-	  	if(xCurr(2)>=0.10 && isArmed)
+	  	if(xCurr(2)>=(floorL+0.10) && isArmed && twCounter<2000)
 	  	{
-			twStorage(twCounter)=xCurr(6)*throttleMax/9.81;  //throttleMax=9.81*tw[0]
-			twCounter++;
-		}
+//        std::cout << twCounter << std::endl;
+        twStorage(twCounter)=xCurr(6)*throttleMax/9.81;  //throttleMax=9.81*tw[0]
+			  twCounter++;
+		  }
 	}
 	else //run intitialization
 	{

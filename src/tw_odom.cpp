@@ -38,6 +38,8 @@ twNode::twNode(ros::NodeHandle &nh)
  	bool useUDP = false;
  	ros::param::get(quadName + "/useUDP",useUDP);
 
+ 	ros::param::get(quadName + "/useCommandedQuatInsteadOfRealQuat",useCommQuat_);
+
 	quaternionSetpoint.x() = 0;
 	quaternionSetpoint.y() = 0;
 	quaternionSetpoint.z() = 0;
@@ -116,15 +118,30 @@ void twNode::gpsCallback(const nav_msgs::Odometry::ConstPtr &msg)
 {
 	double tNow = tCurr();
 
-  Eigen::Matrix<double,6,1> zMeas;
+  	Eigen::Matrix<double,6,1> zMeas;
+  	Eigen::Matrix3d RR;
  	if(kfInit)  //only filter if initPose_ has been set
   	{
-//      ROS_INFO("Pose received");
-  		Eigen::Matrix3d RR(quaternionSetpoint);
+  		//Fly with commanded quaternion or measured quaternion (legacy or not)
+  		if(useCommQuat_)
+  		{
+  			Eigen::Matrix3d tmp(quaternionSetpoint);
+  			RR = tmp;
+  		}
+  		else
+  		{
+  			Eigen::Quaterniond flightQuat;
+  			flightQuat.x() = msg->pose.pose.orientation.x;
+  			flightQuat.y() = msg->pose.pose.orientation.y;
+  			flightQuat.z() = msg->pose.pose.orientation.z;
+  			flightQuat.w() = msg->pose.pose.orientation.w;
+  			Eigen::Matrix3d tmp(flightQuat);
+  			RR = tmp;
+  		}
+
   		Eigen::Vector3d uvec = RR*Eigen::Vector3d(0.0,0.0,throttleSetpoint);
   		
 	  	//T/W filter
-
 	  	double dt = tNow - lastGpsTime;
 		kfTW_.processUpdate(dt,uvec);
 		Eigen::Matrix<double,7,1> xStateAfterProp=kfTW_.getState();
@@ -140,11 +157,11 @@ void twNode::gpsCallback(const nav_msgs::Odometry::ConstPtr &msg)
 		kfTW_.measurementUpdate(measM);
 		xCurr=kfTW_.getState();
 
-	  	if(xCurr(2)>=(floorL+0.10) && isArmed && twCounter<2000)
+	  	if(xCurr(2)>=(floorL+0.10) && isArmed && twCounter<200)
 	  	{
-//        std::cout << twCounter << std::endl;
-        twStorage(twCounter)=xCurr(6)*throttleMax/9.81;  //throttleMax=9.81*tw[0]
-			  twCounter++;
+        	twStorage(twCounter)=xCurr(6)*throttleMax/9.81;  //throttleMax=9.81*tw[0]
+			twCounter++;
+			twCounter=twCounter%200;
 		  }
 	}
 	else //run intitialization

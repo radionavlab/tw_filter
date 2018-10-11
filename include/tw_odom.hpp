@@ -34,11 +34,11 @@ class twNode
   ros::Timer timerPub_;
   Eigen::Quaterniond quaternionSetpoint;
   double throttleSetpoint, throttleMax, quadMass, pubRate;
-  bool kfInit, isArmed;
+  bool kfInit, isArmed, useCommQuat_;
   double pi, floorL;
   double lastGpsTime, lastJoyTime;
   //Preallocate a larger array than necessary to avoid overhead due to resizing/copying
-  Eigen::Matrix<double,2000,1> twStorage;
+  Eigen::Matrix<double,200,1> twStorage;
   int twCounter;
 };
 

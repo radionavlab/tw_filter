@@ -71,7 +71,7 @@ void twNode::timerCallback(const ros::TimerEvent &event)
 		meanTW = meanTW + (1.0/twCounter)*twStorage(ij);
 	}
 
-	double battstat(100.0*(1.0-(1.80-meanTW)/0.4));
+	double battstat(100.0*(1.0-(1.62-meanTW)/0.36));
 
 	tw_filter::twUpdate tw_msg;
 	tw_msg.rosTime = tCurr();

@@ -13,10 +13,11 @@ twNode::twNode(ros::NodeHandle &nh)
 
   	//Get data about node and topic to listen
   	std::string quadPoseTopic;
-  	double tmax, pubRate;
+  	double pubRate;
   	quadName = ros::this_node::getName();
   	ros::param::get(quadName + "/quadPoseTopic", quadPoseTopic);
   	ros::param::get(quadName + "/maxTW",tmax);
+  	ros::param::get(quadName + "/minTW",tmin);
   	ros::param::get(quadName + "/mass",quadMass);
   	ros::param::get(quadName + "/pubRate", pubRate);
   	ros::param::get(quadName + "/groundLevel",floorL);
@@ -71,13 +72,13 @@ void twNode::timerCallback(const ros::TimerEvent &event)
 		meanTW = meanTW + (1.0/twCounter)*twStorage(ij);
 	}
 
-	double battstat(100.0*(1.0-(1.62-meanTW)/0.36));
+	double battstat(100.0*(1.0-(tmax-meanTW)/(tmax-tmin)));
 
 	tw_filter::twUpdate tw_msg;
 	tw_msg.rosTime = tCurr();
 	tw_msg.estimatedTW = meanTW;
 	twPub_.publish(tw_msg);
-	ROS_INFO("Updating T/W to %f. Battery at approximately %f%%",meanTW,battstat);
+	ROS_INFO("Updating T/W to %f. Battery at approximately %f of flight range",meanTW,battstat);
 	twCounter=0;
 }
 

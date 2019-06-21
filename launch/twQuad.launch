@@ -3,13 +3,14 @@
 
     <node pkg="tw_filter" type="twFilter_node" name="twFilter"
         ns="$(arg quad_namespace)" output="screen">
-            <param name="quadPoseTopic" type="string" value="WRW/local_odom"/>
-            <param name="maxTW" value="1.7"/>
-            <param name="mass" value="0.762"/>
+            <param name="quadPoseTopic" type="string" value="ENU/local_odom"/>
+            <param name="maxTW" value="1.9"/>
+            <param name="minTW" value=1.6"/>
+            <param name="mass" value="0.75"/>
             <param name="pubRate" value="0.1"/>
             <param name="useCommandedQuatInsteadOfRealQuat" type="bool" value="false"/>
 
             <!-- Ground level can be nonzero if flying outside of normal area -->
-            <param name="groundLevel" value="-7.5"/>
+            <param name="groundLevel" value="-4.95"/>
     </node>
 </launch>

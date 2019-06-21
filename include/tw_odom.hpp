@@ -33,7 +33,7 @@ class twNode
   ros::Subscriber gps_sub_, joy_sub_, attSub_, thrustSub_;
   ros::Timer timerPub_;
   Eigen::Quaterniond quaternionSetpoint;
-  double throttleSetpoint, throttleMax, quadMass, pubRate;
+  double throttleSetpoint, throttleMax, quadMass, pubRate, tmax, tmin;
   bool kfInit, isArmed, useCommQuat_;
   double pi, floorL;
   double lastGpsTime, lastJoyTime;
